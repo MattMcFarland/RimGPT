@@ -76,21 +76,17 @@ namespace RimGPT
 
 		private string GetCurrentChatGPTModel()
 		{
-			// Always use primary if UseSecondaryModel is turned off
 			if (!RimGPTMod.Settings.UseSecondaryModel) return RimGPTMod.Settings.ChatGPTModelPrimary;
-			// Increment the model switch counter for each call to this method.
+
 			_modelSwitchCounter++;
 
-			// Determine which model to use based on the ModelSwitchRatio.
-			// If the counter value modulated by the ModelSwitchRatio equals 1, then switch to the secondary model.
-			// This implies that if the counter is a multiple of the ratio, we will still return the primary model,
-			// achieving the desired switching effect only after the specified number of primary model uses.
-			if ((_modelSwitchCounter % RimGPTMod.Settings.ModelSwitchRatio) == 1)
-			{
+			if (_modelSwitchCounter == RimGPTMod.Settings.ModelSwitchRatio) {
+				_modelSwitchCounter = 0;
+
+				Logger.Message("Using Secondary Model");
 				return RimGPTMod.Settings.ChatGPTModelSecondary;
-			}
-			else
-			{
+			} else {
+				Logger.Message("Using Primary Model");
 				return RimGPTMod.Settings.ChatGPTModelPrimary;
 			}
 		}
